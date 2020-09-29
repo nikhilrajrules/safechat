@@ -1,6 +1,7 @@
 package com.example.safechat;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,7 +19,12 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
+import org.tensorflow.lite.support.label.Category;
+import org.tensorflow.lite.task.text.nlclassifier.BertNLClassifier;
+
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Chat extends AppCompatActivity {
@@ -46,12 +53,35 @@ public class Chat extends AppCompatActivity {
             public void onClick(View v) {
                 String messageText = messageArea.getText().toString();
 
-                if(!messageText.equals("")){
+                String modelFile="model.tflite";
+                boolean hateornot=false;
+                try {
+                    BertNLClassifier classifier = BertNLClassifier.createFromFile(Chat.this, modelFile);
+                    List<Category> results = classifier.classify(messageText);
+                    if(results.get(0).getScore()>=results.get(1).getScore())
+                    {
+                        hateornot=false;
+                    }
+                    else
+                    {
+                        hateornot=true;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if(!messageText.equals("") && hateornot==false){
                     Map<String, String> map = new HashMap<String, String>();
+
                     map.put("message", messageText);
                     map.put("user", UserDetails.username);
                     reference1.push().setValue(map);
                     reference2.push().setValue(map);
+                    messageArea.setText("");
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Hate Speech",Toast.LENGTH_SHORT).show();
                 }
             }
         });

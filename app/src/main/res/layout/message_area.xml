@@ -24,4 +24,13 @@
         android:padding="4dp"
         android:src="@android:drawable/ic_menu_send"
         android:id="@+id/sendButton"/>
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        android:padding="4dp"
+        android:src="@android:drawable/ic_menu_camera"
+        android:id="@+id/sendImageButton"
+        android:onClick="pickAImage"/>
+
 </LinearLayout>

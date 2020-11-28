@@ -69,6 +69,10 @@ public class Users extends AppCompatActivity {
             }
         });
     }
+    public void groupChat(View view)
+    {
+        startActivity(new Intent(Users.this, GroupChat.class));
+    }
 
     public void doOnSuccess(String s){
         try {

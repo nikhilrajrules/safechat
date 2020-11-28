@@ -3,27 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.safechat.Users"
-    android:orientation="vertical">
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Group Chat"
-        android:onClick="groupChat"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No users found!"
-        android:id="@+id/noUsersText"
-        android:visibility="gone"/>
+    android:orientation="vertical"
+    tools:context="com.example.safechat.Chat">
 
-    <ListView
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_weight="20"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollViewGroup">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/layout1Group">
+
+        </LinearLayout>
+    </ScrollView>
+
+    <include
+        layout="@layout/message_grouparea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/usersList"/>
+        android:gravity="bottom"
+        android:layout_marginTop="5dp"/>
 </LinearLayout>

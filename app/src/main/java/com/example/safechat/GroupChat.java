@@ -1,7 +1,5 @@
 package com.example.safechat;
 
-
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,12 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Chat extends AppCompatActivity {
+public class GroupChat extends AppCompatActivity {
     LinearLayout layout;
     ImageView sendButton;
     EditText messageArea;
     ScrollView scrollView;
-    Firebase reference1, reference2, reference3, reference4;
+    Firebase reference1, reference3;
     private static final int SELECT_PHOTO = 100;
 
 
@@ -49,17 +47,16 @@ public class Chat extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        setContentView(R.layout.activity_groupchat);
 
-        layout = (LinearLayout)findViewById(R.id.layout1);
-        sendButton = (ImageView)findViewById(R.id.sendButton);
-        messageArea = (EditText)findViewById(R.id.messageArea);
-        scrollView = (ScrollView)findViewById(R.id.scrollView);
+        layout = (LinearLayout)findViewById(R.id.layout1Group);
+        sendButton = (ImageView)findViewById(R.id.sendButtonGroup);
+        messageArea = (EditText)findViewById(R.id.messageAreaGroup);
+        scrollView = (ScrollView)findViewById(R.id.scrollViewGroup);
 
         Firebase.setAndroidContext(this);
-        reference1 = new Firebase("https://safechat-392b0.firebaseio.com/messages/" + UserDetails.username + "_" + UserDetails.chatWith);
-        reference2 = new Firebase("https://safechat-392b0.firebaseio.com/messages/" + UserDetails.chatWith + "_" + UserDetails.username);
-        reference3 = new Firebase("https://safechat-392b0.firebaseio.com/messages/images/" + UserDetails.username + "_" + UserDetails.chatWith);
+        reference1 = new Firebase("https://safechat-392b0.firebaseio.com/messages/Group");
+        reference3 = new Firebase("https://safechat-392b0.firebaseio.com/messages/images/Group");
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,7 +65,7 @@ public class Chat extends AppCompatActivity {
                 String modelFile="model.tflite";
                 boolean hateornot=false;
                 try {
-                    BertNLClassifier classifier = BertNLClassifier.createFromFile(Chat.this, modelFile);
+                    BertNLClassifier classifier = BertNLClassifier.createFromFile(GroupChat.this, modelFile);
                     List<Category> results = classifier.classify(messageText);
                     if(results.get(0).getScore()>=results.get(1).getScore())
                     {
@@ -88,7 +85,6 @@ public class Chat extends AppCompatActivity {
                     map.put("message", messageText);
                     map.put("user", UserDetails.username);
                     reference1.push().setValue(map);
-                    reference2.push().setValue(map);
                     messageArea.setText("");
                 }
                 else if(!messageText.equals(""))
@@ -112,7 +108,7 @@ public class Chat extends AppCompatActivity {
                 if (userName.equals(UserDetails.username)) {
                     addMessageBox("You:-\n" + message, 1);
                 } else {
-                    addMessageBox(UserDetails.chatWith + ":-\n" + message, 2);
+                    addMessageBox(userName+ ":-\n" + message, 2);
                 }
             }
 
@@ -150,7 +146,7 @@ public class Chat extends AppCompatActivity {
                 if (userName.equals(UserDetails.username)) {
                     addImageBox("You", 1,decodedImage);
                 } else {
-                    addImageBox(UserDetails.chatWith, 2,decodedImage);
+                    addImageBox(userName, 2,decodedImage);
                 }
             }
 
@@ -176,7 +172,7 @@ public class Chat extends AppCompatActivity {
         });
     }
 
-    public void pickAImage(View view) {
+    public void pickAImageGroup(View view) {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, SELECT_PHOTO);
@@ -204,14 +200,12 @@ public class Chat extends AppCompatActivity {
                     String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 //                    image.setImageURI(selectedImage);// To display selected image in image view
                     Firebase.setAndroidContext(this);
-                    reference3 = new Firebase("https://safechat-392b0.firebaseio.com/messages/images/" + UserDetails.username + "_" + UserDetails.chatWith);
-                    reference4 = new Firebase("https://safechat-392b0.firebaseio.com/messages/images/" + UserDetails.chatWith + "_" + UserDetails.username);
+                    reference3 = new Firebase("https://safechat-392b0.firebaseio.com/messages/images/Group");
                     Map<String, String> map = new HashMap<String, String>();
 
                     map.put("message", imageString);
                     map.put("user", UserDetails.username);
                     reference3.push().setValue(map);
-                    reference4.push().setValue(map);
                 }
                 else
                 {
@@ -221,7 +215,7 @@ public class Chat extends AppCompatActivity {
     }
 
     public void addMessageBox(String message, int type){
-        TextView textView = new TextView(Chat.this);
+        TextView textView = new TextView(GroupChat.this);
         textView.setText(message);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 0, 0, 10);
@@ -239,7 +233,7 @@ public class Chat extends AppCompatActivity {
     }
     public void addImageBox(String user,int type,Bitmap img)
     {
-        ImageView imageview = new ImageView(Chat.this);
+        ImageView imageview = new ImageView(GroupChat.this);
         imageview.setImageBitmap(img);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(400, 400);
         lp.setMargins(0, 0, 0, 10);
